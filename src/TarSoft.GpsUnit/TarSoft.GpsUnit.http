@@ -1,0 +1,45 @@
+# @TarSoft.GpsUnit_HostAddress = http://localhost:5034
+
+# GET {{TarSoft.GpsUnit_HostAddress}}/weatherforecast/
+# Accept: application/json
+
+###
+
+
+@baseURL = http://localhost:5034/api/v1/Gps
+
+### Get all GPS units
+GET {{baseURL}}/
+Accept: application/json
+
+### Get GPS unit by ID
+# Replace `:id` with an actual ID from your database
+GET {{baseURL}}/:id
+Accept: application/json
+
+### Create a new GPS unit
+POST {{baseURL}}/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "CustomerId": "replace-with-customer-id",
+  "Name": "New GPS Unit",
+  "Description": "Description of new GPS unit"
+}
+
+### Update an existing GPS unit
+# Replace `:id` with an actual ID
+PUT {{baseURL}}/:id
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": "Updated GPS Unit",
+  "Description": "Updated description of the GPS unit"
+}
+
+### Delete a GPS unit
+# Replace `:id` with an actual ID
+DELETE {{baseURL}}/:id
+Accept: application/json

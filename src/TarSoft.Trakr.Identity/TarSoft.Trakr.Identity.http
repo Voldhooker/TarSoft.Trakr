@@ -1,0 +1,6 @@
+@TarSoft.Trakr.Identity_HostAddress = http://localhost:5221
+
+GET {{TarSoft.Trakr.Identity_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

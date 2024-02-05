@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  tarsoft.dbserver:
+    container_name: tarsoft.dbserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - "8002:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Password@12345#
+
+  tarsoft.gpsunit:
+    image: ${DOCKER_REGISTRY-}tarsoftgpsunit
+    build:
+      context: .
+      dockerfile: TarSoft.GpsUnit/Dockerfile
+    ports:
+      - "8001:80"
+    depends_on:
+      - tarsoft.dbserver
+    environment:
+      - DB_HOST=tarsoft.dbserver
+      - DB_SA_Password=Password@12345#
+      # Uncomment the next line if the DB_Name environment variable is required
+      - DB_Name=GPSUnit
