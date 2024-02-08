@@ -34,13 +34,10 @@ namespace TarSoft.GpsUnit.Api.CQRS.Queries
                 }
                 return Result.Ok(unit);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result.Fail(new DatabaseError());
             }
         }
-
-       
     }
-
 }
