@@ -8,7 +8,17 @@ services:
       - "8002:1433"
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=Password@12345#
+      - SA_PASSWORD=YourStrong!Passw0rd # Replace with a strong password or use Docker secrets
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=your_user # Customize as needed
+      - POSTGRES_PASSWORD=YourStrong!Passw0rd # Replace with a strong password or use Docker secrets
+      - POSTGRES_DB=postgresstest
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   tarsoft.gpsunit:
     image: ${DOCKER_REGISTRY-}tarsoftgpsunit
@@ -21,6 +31,8 @@ services:
       - tarsoft.dbserver
     environment:
       - DB_HOST=tarsoft.dbserver
-      - DB_SA_Password=Password@12345#
-      # Uncomment the next line if the DB_Name environment variable is required
-      - DB_Name=GPSUnit
+      - DB_SA_Password=YourStrong!Passw0rd # Replace with the actual password or use Docker secrets
+      - DB_Name=GPSUnit # Uncomment or modify as needed
+
+volumes:
+  postgres_data:
