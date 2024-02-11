@@ -13,7 +13,7 @@ namespace TarSoft.Tests
         public async Task Handle_ExistingUnit_ReturnsOkResult()
         {
             // Arrange
-            var query = new GetGpsUnitQuery { Id = Guid.NewGuid() };
+            var query = new GetGpsUnitQuery(Guid.NewGuid());
             var cancellationToken = CancellationToken.None;
 
             var dbContextMock = new Mock<GpsUnitContext>();
@@ -38,7 +38,7 @@ namespace TarSoft.Tests
         public async Task Handle_NonExistingUnit_ReturnsFailResult()
         {
             // Arrange
-            var query = new GetGpsUnitQuery { Id = Guid.NewGuid() };
+            var query = new GetGpsUnitQuery(Guid.NewGuid());
             var cancellationToken = CancellationToken.None;
 
             var dbContextMock = new Mock<GpsUnitContext>();
@@ -62,7 +62,7 @@ namespace TarSoft.Tests
         public async Task Handle_ExceptionThrown_ReturnsFailResult()
         {
             // Arrange
-            var query = new GetGpsUnitQuery { Id = Guid.NewGuid() };
+            var query = new GetGpsUnitQuery (Guid.NewGuid());
             var cancellationToken = CancellationToken.None;
 
             var dbContextMock = new Mock<GpsUnitContext>();

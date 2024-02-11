@@ -1,12 +1,14 @@
 ﻿using Asp.Versioning;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TarSoft.GpsUnit.Api.CQRS.Queries;
 using TarSoft.GpsUnit.Api.Dtos;
 using TarSoft.GpsUnit.Application;
 using TarSoft.Mediator;
 using TarSoft.Trakr.Common;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TarSoft.GpsUnit.Api.Controllers
 {
@@ -16,30 +18,44 @@ namespace TarSoft.GpsUnit.Api.Controllers
     [ApiController]
     public class GpsController : ControllerBase
     {
-        private readonly IQueryHandler<GetAllGpsUnitsQuery, Result<IEnumerable<Domain.GpsUnit>>> _getAllUnitsQueryHandler;
-        private readonly IQueryHandler<GetGpsUnitQuery, Result<Domain.GpsUnit>> _getSpecificUnitQueryHandler;
+        //private readonly IQueryHandler<GetAllGpsUnitsQuery, Result<IEnumerable<Domain.GpsUnit>>> _getAllUnitsQueryHandler;
+        //private readonly IQueryHandler<GetGpsUnitQuery, Result<Domain.GpsUnit>> _getSpecificUnitQueryHandler;
+
+        private readonly IMediator _mediator;
 
 
-
-
-
-        public GpsController(IQueryHandler<GetAllGpsUnitsQuery, Result<IEnumerable<Domain.GpsUnit>>> getAllUnitsQueryHandler, IQueryHandler<GetGpsUnitQuery, Result<Domain.GpsUnit>> getSpecificUnitQueryHandler)
+        public GpsController(IMediator mediator)
         {
-            _getAllUnitsQueryHandler = getAllUnitsQueryHandler;
-            _getSpecificUnitQueryHandler = getSpecificUnitQueryHandler;
+            this._mediator = mediator;
         }
 
-        //[HttpGet]
-        //public async Task<IEnumerable<GpsUnitDto>> Get(CancellationToken ct)
+
+
+        //public GpsController(IQueryHandler<GetAllGpsUnitsQuery, Result<IEnumerable<Domain.GpsUnit>>> getAllUnitsQueryHandler, IQueryHandler<GetGpsUnitQuery, Result<Domain.GpsUnit>> getSpecificUnitQueryHandler)
         //{
-        //    var units = await _getAllUnitsQueryHandler.Handle(new GetAllGpsUnitsQuery(), ct);
-        //    return units.MapToDto();
+        //    _getAllUnitsQueryHandler = getAllUnitsQueryHandler;
+        //    _getSpecificUnitQueryHandler = getSpecificUnitQueryHandler;
         //}
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GpsUnitDto>> GetByKeyAsync(Guid id)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<GpsUnitDto>>> Get(CancellationToken ct)
         {
-            var unitResult = await _getSpecificUnitQueryHandler.Handle(new GetGpsUnitQuery { Id = id }, CancellationToken.None);
+            //var unitsResult = await _getAllUnitsQueryHandler.Handle(new GetAllGpsUnitsQuery(), ct);
+            var unitsResult = await _mediator.Send(new GetAllGpsUnitsQuery(), ct);
+
+            if (unitsResult.IsFailed)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "A database error occurred.");
+            }   
+            return Ok(unitsResult.Value.MapToDto());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GpsUnitDto>> GetByKeyAsync(Guid id, CancellationToken ct)
+        {
+            //var unitResult = await _getSpecificUnitQueryHandler.Handle(new GetGpsUnitQuery { Id = id }, ct);
+
+            var unitResult = await _mediator.Send(new GetGpsUnitQuery(id), ct);
 
             if (unitResult.IsSuccess)
             {
@@ -87,7 +103,7 @@ namespace TarSoft.GpsUnit.Api.Controllers
         //        Name = dto.Name,
         //        Description = dto.Description
         //    };
-            
+
         //    dtos[index] = updatedItem;
 
         //    return Ok(updatedItem);

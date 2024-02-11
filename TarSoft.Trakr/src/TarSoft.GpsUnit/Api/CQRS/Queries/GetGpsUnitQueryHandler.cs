@@ -9,13 +9,22 @@ using TarSoft.Trakr.Common;
 namespace TarSoft.GpsUnit.Api.CQRS.Queries
 {
 
-    public class GetGpsUnitQuery 
+    //public class GetGpsUnitQuery 
+    //{
+    //    public Guid Id { get; set; }
+    //}
+
+    public class GetGpsUnitQuery : IRequest<Result<Domain.GpsUnit>>
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; }
+
+        public GetGpsUnitQuery(Guid id)
+        {
+            Id = id;
+        }
     }
 
-
-    public class GetGpsUnitHandler : IQueryHandler<GetGpsUnitQuery, Result<TarSoft.GpsUnit.Domain.GpsUnit>>
+    public class GetGpsUnitHandler : IQueryHandler<GetGpsUnitQuery, Result<Domain.GpsUnit>>
     {
         private readonly GpsUnitContext _dbContext;
         public GetGpsUnitHandler(GpsUnitContext context)

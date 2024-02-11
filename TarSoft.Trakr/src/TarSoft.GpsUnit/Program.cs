@@ -16,30 +16,34 @@ var builder = WebApplication.CreateBuilder(args);
 /************** Tarsoft.Mediator*/
 builder.Services.TryAddSingleton<ICommandDispatcher, CommandDispatcher>();
 builder.Services.TryAddSingleton<IQueryDispatcher, QueryDispatcher>();
+builder.Services.AddScoped<IMediator, SimpleMediator>();
+
+builder.Services.AddScoped<IQueryHandler<GetAllGpsUnitsQuery, Result<List<GpsUnit>>>, GetAllGpsUnitsHandler>();
+
 
 //builder.Services.AddScoped<IQueryHandler<GetAllGpsUnitsQuery, Result<IEnumerable<GpsUnit>>>, GetAllGpsUnitsHandler>();
 
 // INFO: Using https://www.nuget.org/packages/Scrutor for registering all Query and Command handlers by convention
-builder.Services.Scan(selector =>
-{
-    selector.FromCallingAssembly()
-            .AddClasses(filter =>
-            {
-                filter.AssignableTo(typeof(IQueryHandler<,>));
-            })
-            .AsImplementedInterfaces()
-            .WithScopedLifetime();
-});
-builder.Services.Scan(selector =>
-{
-    selector.FromCallingAssembly()
-            .AddClasses(filter =>
-            {
-                filter.AssignableTo(typeof(ICommandHandler<,>));
-            })
-            .AsImplementedInterfaces()
-            .WithScopedLifetime();
-});
+//builder.Services.Scan(selector =>
+//{
+//    selector.FromCallingAssembly()
+//            .AddClasses(filter =>
+//            {
+//                filter.AssignableTo(typeof(IQueryHandler<,>));
+//            })
+//            .AsImplementedInterfaces()
+//            .WithScopedLifetime();
+//});
+//builder.Services.Scan(selector =>
+//{
+//    selector.FromCallingAssembly()
+//            .AddClasses(filter =>
+//            {
+//                filter.AssignableTo(typeof(ICommandHandler<,>));
+//            })
+//            .AsImplementedInterfaces()
+//            .WithScopedLifetime();
+//});
 
 
 /*******************/
