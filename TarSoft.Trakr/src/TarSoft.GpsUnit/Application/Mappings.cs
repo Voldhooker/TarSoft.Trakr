@@ -15,5 +15,10 @@ namespace TarSoft.GpsUnit.Application
             return units.Select(MapToDto);
         }
 
+        public static Domain.GpsUnit MapToEntity(this CreateGpsUnitDto dto)
+        {
+            return new Domain.GpsUnit(Guid.NewGuid(),Guid.NewGuid(), dto.Name, dto.Description);
+        }
+
     }
 }

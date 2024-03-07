@@ -3,6 +3,7 @@ using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using TarSoft.GpsUnit.Api.CQRS.Commands;
 using TarSoft.GpsUnit.Api.CQRS.Queries;
 using TarSoft.GpsUnit.Api.Dtos;
 using TarSoft.GpsUnit.Application;
@@ -78,50 +79,97 @@ namespace TarSoft.GpsUnit.Api.Controllers
             }
         }
 
-        //[HttpPost]
-        //public ActionResult<GpsUnitDto> Create(CreateGpsUnitDto dto)
-        //{
-        //    var newDto = new GpsUnitDto(Guid.NewGuid(), dto.CustomerId, dto.Name, dto.Description, Guid.NewGuid());
-        //    dtos.Add(newDto);
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateGpsUnitDto updateDto, CancellationToken ct)
+        {
+            var updateResult = await _mediator.Send(new UpdateGpsUnitCommand(id, updateDto), ct);
 
-        //    return CreatedAtAction(nameof(GetByKey), new { id = newDto.Id }, newDto);
-        //}
+            if (updateResult.IsSuccess)
+            {
+                // If the update is successful, return NoContent or Ok depending on your API design
+                return NoContent(); // or Ok(updateResult) if you want to return the updated entity
+            }
+            else
+            {
+                if (updateResult.Errors.Any(e => e is DatabaseError))
+                {
+                    // Handle the scenario where a DatabaseError occurred
+                    return StatusCode(500, "A database error occurred during the update.");
+                }
+                else if (updateResult.Errors.Any(e => e is NotFoundError))
+                {
+                    // Handle the scenario where the GPS unit to update was not found
+                    return NotFound("The GPS unit to update was not found.");
+                }
+                else
+                {
+                    // Handle other errors
+                    return BadRequest(updateResult.Errors); // Assuming errors are client-correctable
+                }
+            }
+        }
 
-        //[HttpPut("{id}")]
-        //public ActionResult<GpsUnitDto> Update(Guid id, UpdateGpsUnitDto dto)
-        //{
-        //    var existingDto = dtos.Where(x => x.Id == id).SingleOrDefault();    
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken ct)
+        {
+            var deleteResult = await _mediator.Send(new DeleteGpsUnitCommand(id), ct);
 
-        //    if (existingDto is null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (deleteResult.IsSuccess)
+            {
+                // If the deletion is successful, return NoContent (204)
+                return NoContent();
+            }
+            else
+            {
+                if (deleteResult.Errors.Any(e => e is DatabaseError))
+                {
+                    // Handle the scenario where a DatabaseError occurred
+                    return StatusCode(500, "A database error occurred during the deletion.");
+                }
+                else if (deleteResult.Errors.Any(e => e is NotFoundError))
+                {
+                    // Handle the scenario where the GPS unit to delete was not found
+                    return NotFound("The GPS unit to delete was not found.");
+                }
+                else
+                {
+                    // Handle other errors
+                    return BadRequest(deleteResult.Errors); // Assuming errors are client-correctable
+                }
+            }
+        }
 
-        //    var index = dtos.FindIndex(x => x.Id == id);
-        //    var updatedItem = existingDto with
-        //    {
-        //        Name = dto.Name,
-        //        Description = dto.Description
-        //    };
+        [HttpPost]
+        public async Task<IActionResult> AddAsync([FromBody] CreateGpsUnitDto createDto, CancellationToken ct)
+        {
+            var command = new AddGpsUnitCommand(createDto);
+            var result = await _mediator.Send(command, ct);
 
-        //    dtos[index] = updatedItem;
+            if (result.IsSuccess)
+            {
+                var createdUnit = result.Value; // Assuming the result wraps the newly created GpsUnit entity
+                return CreatedAtAction(nameof(GetByKeyAsync), new { id = createdUnit.Id }, createdUnit); // Adjust according to your Get method
+            }
+            else
+            {
+                //if (result.Errors.Any(e => e is ValidationFailureError))
+                //{
+                //    // Handle validation failure scenario
+                //    return BadRequest(result.Errors);
+                //}
+                if (result.Errors.Any(e => e is DatabaseError))
+                {
+                    // Handle the scenario where a DatabaseError occurred
+                    return StatusCode(500, "A database error occurred.");
+                }
+                else
+                {
+                    // Handle other errors
+                    return BadRequest(result.Errors); // Assuming errors are client-correctable
+                }
+            }
+        }
 
-        //    return Ok(updatedItem);
-        //}
-
-        //[HttpDelete("{id}")]
-        //public ActionResult Delete(Guid id)
-        //{
-        //    var unit = dtos.Where(x => x.Id == id).SingleOrDefault();
-
-        //    if (unit == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    dtos.Remove(unit);
-
-        //    return NoContent();
-        //}
+       
     }
 }

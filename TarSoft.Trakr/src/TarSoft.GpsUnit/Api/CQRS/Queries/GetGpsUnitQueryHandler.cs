@@ -39,7 +39,7 @@ namespace TarSoft.GpsUnit.Api.CQRS.Queries
                 Domain.GpsUnit? unit = await _dbContext.GpsUnits.FindAsync(query.Id, cancellationToken);
                 if (unit is null)
                 {
-                    return Result.Fail<Domain.GpsUnit>("Unit not found");
+                    return Result.Fail(new NotFoundError());
                 }
                 return Result.Ok(unit);
             }

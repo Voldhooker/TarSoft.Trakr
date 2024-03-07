@@ -9,4 +9,12 @@ namespace TarSoft.Trakr.Common
         {
         }
     }
+
+    public class NotFoundError : Error
+    {
+        public NotFoundError()
+            : base($"The requested resource was not found")
+        {
+        }
+    }
 }
