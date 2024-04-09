@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TarSoft.Mediator", "TarSoft
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TarSoft.Trakr.Common", "TarSoft.Trakr.Common\TarSoft.Trakr.Common.csproj", "{2CBECF08-DA1A-498A-A312-07F2C94608E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TarSoft.Tests", "TarSoft.Tests\TarSoft.Tests.csproj", "{2A0290B5-DC02-427F-9100-5A71CA5E33B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TarSoft.Tests", "TarSoft.Tests\TarSoft.Tests.csproj", "{2A0290B5-DC02-427F-9100-5A71CA5E33B9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{F944FDC0-6DF7-49B2-A7EF-4D5B1B0C85CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
