@@ -6,6 +6,7 @@ using TarSoft.GpsUnit.Api.CQRS.Queries;
 using TarSoft.GpsUnit.Domain;
 using TarSoft.GpsUnit.Infrastructure;
 using TarSoft.Mediator;
+using TarSoft.Mediator.Behaviours;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,27 +23,39 @@ builder.Services.AddScoped<IMediator, SimpleMediator>();
 
 
 // INFO: Using https://www.nuget.org/packages/Scrutor for registering all Query and Command handlers by convention
-builder.Services.Scan(selector =>
-{
-    selector.FromCallingAssembly()
-            .AddClasses(filter =>
-            {
-                filter.AssignableTo(typeof(IQueryHandler<,>));
-            })
-            .AsImplementedInterfaces()
-            .WithScopedLifetime();
-});
-builder.Services.Scan(selector =>
-{
-    selector.FromCallingAssembly()
-            .AddClasses(filter =>
-            {
-                filter.AssignableTo(typeof(ICommandHandler<,>));
-            })
-            .AsImplementedInterfaces()
-            .WithScopedLifetime();
-});
+//builder.Services.Scan(selector =>
+//{
+//    selector.FromCallingAssembly()
+//            .AddClasses(filter =>
+//            {
+//                filter.AssignableTo(typeof(IQueryHandler<,>));
+//            })
+//            .AsImplementedInterfaces()
+//            .WithScopedLifetime();
+//});
+//builder.Services.Scan(selector =>
+//{
+//    selector.FromCallingAssembly()
+//            .AddClasses(filter =>
+//            {
+//                filter.AssignableTo(typeof(ICommandHandler<,>));
+//            })
+//            .AsImplementedInterfaces()
+//            .WithScopedLifetime();
+//});
 
+builder.Services.Scan(scan => scan
+    .FromCallingAssembly()
+    .AddClasses(classes => classes.AssignableToAny(
+        typeof(IQueryHandler<,>),
+        typeof(ICommandHandler<,>)
+    ))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
+
+builder.Services.AddScoped<ICommandDispatcher, CommandDispatcher>();
+
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
 /*******************/
 

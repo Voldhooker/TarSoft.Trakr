@@ -8,7 +8,7 @@ using TarSoft.Trakr.Common;
 
 namespace TarSoft.GpsUnit.Api.CQRS.Commands
 {
-    public class AddGpsUnitCommand : IRequest<Result<Domain.GpsUnit>>
+    public class AddGpsUnitCommand : ICustomCommand, IRequest<Result<Domain.GpsUnit>>
     {
         public CreateGpsUnitDto CreateDto { get; }
 
@@ -17,7 +17,7 @@ namespace TarSoft.GpsUnit.Api.CQRS.Commands
             CreateDto = createDto;
         }
 
-        public class AddGpsUnitHandler : IRequestHandler<AddGpsUnitCommand, Result<Domain.GpsUnit>>
+        public class AddGpsUnitHandler : ICommandHandler<AddGpsUnitCommand, Result<Domain.GpsUnit>>
         {
             private readonly GpsUnitContext _dbContext;
 
@@ -37,17 +37,13 @@ namespace TarSoft.GpsUnit.Api.CQRS.Commands
 
                     return Result.Ok(newUnit); // Return the newly created GpsUnit entity
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Log the exception if necessary
                     return Result.Fail<Domain.GpsUnit>(new DatabaseError());
                 }
             }
-
-           
-
         }
-
     }
 
 }
