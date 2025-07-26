@@ -9,11 +9,13 @@
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ICommandDispatcher _commandDispatcher;
+        private readonly IQueryDispatcher _queryDispatcher;
 
         public SimpleMediator(IServiceProvider serviceProvider, ICommandDispatcher commandDispatcher)
         {
             _serviceProvider = serviceProvider;
             _commandDispatcher = commandDispatcher;
+            _queryDispatcher = new QueryDispatcher(serviceProvider);
         }
 
         public async Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
@@ -23,23 +25,14 @@
 
             if (isCommand)
             {
-                //Ugh I do not like this. Not sure how to make it better
-                var responseType = typeof(TResponse);
-                var dispatchMethod = typeof(CommandDispatcher).GetMethod("Dispatch").MakeGenericMethod(requestType, responseType);
-                return await (Task<TResponse>)dispatchMethod.Invoke(_commandDispatcher, new object[] { (dynamic)request, cancellationToken });
+                // Use dynamic dispatch to call the strongly-typed command dispatcher
+                // This is cleaner than reflection and still benefits from pipeline behaviors
+                return await ((dynamic)_commandDispatcher).Dispatch((dynamic)request, cancellationToken);
             }
             else
             {
-                // Resolve and call the query handler directly. TODO: Modify for pipeline behaviors 
-                var handlerType = typeof(IQueryHandler<,>).MakeGenericType(requestType, typeof(TResponse));
-                dynamic handler = _serviceProvider.GetRequiredService(handlerType);
-
-                if (handler == null)
-                {
-                    throw new InvalidOperationException($"Handler for {requestType.Name} not found.");
-                }
-
-                return await handler.Handle((dynamic)request, cancellationToken);
+                // Use dynamic dispatch for queries as well for consistency
+                return await ((dynamic)_queryDispatcher).Dispatch((dynamic)request, cancellationToken);
             }
         }
     }
