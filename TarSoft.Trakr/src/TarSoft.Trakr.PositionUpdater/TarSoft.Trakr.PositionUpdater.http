@@ -1,6 +1,0 @@
-@TarSoft.Trakr.PositionUpdater_HostAddress = http://localhost:5169
-
-GET {{TarSoft.Trakr.PositionUpdater_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

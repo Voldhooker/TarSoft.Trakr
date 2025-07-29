@@ -1,0 +1,63 @@
+@TelemetryIngestor_HostAddress = https://localhost:7106
+
+### Ingest Telemetry Data
+POST {{TelemetryIngestor_HostAddress}}/api/telemetry/ingest
+Content-Type: application/json
+
+{
+  "deviceId": "GPS_DEVICE_001",
+  "latitude": 52.5200,
+  "longitude": 13.4050,
+  "timestamp": "2025-01-26T12:00:00Z",
+  "speed": 45.5,
+  "heading": 135.0,
+  "additionalData": "{\"battery\": 85, \"signal\": \"good\"}"
+}
+
+### Get Telemetry Data for Device
+GET {{TelemetryIngestor_HostAddress}}/api/telemetry/GPS_DEVICE_001
+Content-Type: application/json
+
+### Get Telemetry Data with Date Range
+GET {{TelemetryIngestor_HostAddress}}/api/telemetry/GPS_DEVICE_001?fromDate=2025-01-25T00:00:00Z&toDate=2025-01-27T00:00:00Z&pageNumber=1&pageSize=10
+Content-Type: application/json
+
+### Ingest Multiple Telemetry Points
+POST {{TelemetryIngestor_HostAddress}}/api/telemetry/ingest
+Content-Type: application/json
+
+{
+  "deviceId": "GPS_DEVICE_001",
+  "latitude": 52.5210,
+  "longitude": 13.4060,
+  "timestamp": "2025-01-26T12:05:00Z",
+  "speed": 50.0,
+  "heading": 140.0
+}
+
+### Test Validation - Invalid Latitude
+POST {{TelemetryIngestor_HostAddress}}/api/telemetry/ingest
+Content-Type: application/json
+
+{
+  "deviceId": "GPS_DEVICE_002",
+  "latitude": 95.0,
+  "longitude": 13.4050,
+  "timestamp": "2025-01-26T12:00:00Z"
+}
+
+### Test Validation - Empty Device ID
+POST {{TelemetryIngestor_HostAddress}}/api/telemetry/ingest
+Content-Type: application/json
+
+{
+  "deviceId": "",
+  "latitude": 52.5200,
+  "longitude": 13.4050,
+  "timestamp": "2025-01-26T12:00:00Z"
+}etryIngestor_HostAddress = http://localhost:5181
+
+GET {{TelemetryIngestor_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
