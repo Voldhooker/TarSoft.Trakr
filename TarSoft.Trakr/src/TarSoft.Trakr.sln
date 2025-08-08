@@ -8,6 +8,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TarSoft.Mediator", "TarSoft.Mediator\TarSoft.Mediator.csproj", "{7AE6C9E1-EDC6-49CA-9E26-E3EF52256B41}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{F944FDC0-6DF7-49B2-A7EF-4D5B1B0C85CB}"
+	ProjectSection(SolutionItems) = preProject
+		Services\TelemetryIngestor\README.md = Services\TelemetryIngestor\README.md
+		fulldoc.md = fulldoc.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{5854FF58-B8C5-05C6-5BF2-ACE42193F22B}"
 EndProject
